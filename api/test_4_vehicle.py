@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework.test import APIClient
 from .models import Vehicle, Brand, Segment
 from .serializers import VehicleSerializer
+from decimal import Decimal
 
 SEGMENTS_URL = '/api/segments/'
 BRANDS_URL = '/api/brands/'
@@ -77,7 +78,7 @@ class AuthorizedVehicleApiTests(TestCase):
         payload = {
             'vehicle_name': 'MODEL S',
             'release_year': 2019,
-            'price': 500.00,
+            'price': 500.12,
             'segment': segment.id,
             'brand': brand.id,
         }
@@ -86,7 +87,7 @@ class AuthorizedVehicleApiTests(TestCase):
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
         self.assertEqual(payload['vehicle_name'], vehicle.vehicle_name)
         self.assertEqual(payload['release_year'], vehicle.release_year)
-        self.assertEqual(payload['price'], vehicle.price)
+        self.assertAlmostEqual(Decimal(payload['price']),  vehicle.price, 2)
         self.assertEqual(payload['segment'], vehicle.segment.id)
         self.assertEqual(payload['brand'], vehicle.brand.id)
 
